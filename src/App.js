@@ -1,23 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import CustomFetch from "./pages/custom-fetch";
+import ReactQueryFetch from "./pages/react-query";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <div className="linksConttainer">
+                <Link className="link" to="/custom-fetch">
+                  custom-fetch
+                </Link>
+                <Link className="link" to="react-qurey">
+                  react-query
+                </Link>
+              </div>
+            }
+          />
+          <Route exact path="/custom-fetch" element={<CustomFetch />} />
+          <Route path="/react-qurey" element={<ReactQueryFetch />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }

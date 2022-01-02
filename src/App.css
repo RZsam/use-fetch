@@ -6,6 +6,14 @@
   height: 40vmin;
   pointer-events: none;
 }
+.linksConttainer{
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+}
+.link{
+  margin-top: 8px;
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
