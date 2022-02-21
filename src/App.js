@@ -2,8 +2,11 @@ import "./App.css";
 import CustomFetch from "./pages/custom-fetch";
 import ReactQueryFetch from "./pages/react-query";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from 'react-query'
 
 function App() {
+  const queryClient = new QueryClient();
+
   return (
     <div className="App">
       <BrowserRouter>
@@ -22,7 +25,14 @@ function App() {
             }
           />
           <Route exact path="/custom-fetch" element={<CustomFetch />} />
-          <Route path="/react-qurey" element={<ReactQueryFetch />} />
+          <Route
+            path="/react-qurey"
+            element={
+              <QueryClientProvider client={queryClient}>
+                <ReactQueryFetch />
+              </QueryClientProvider>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </div>
