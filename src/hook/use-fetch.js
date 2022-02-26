@@ -1,15 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useReducer, createContext } from "react";
 let cache = {};
 
+function reducer(state, action) {
+  switch (action.type) {
+    case "pending":
+      return { ...state, loading: true };
+    case "successfull":
+      return { loading: false, error: null, data: action.payload };
+    case "error":
+      return { loading: false, error: true, data: null };
+    default:
+      throw new Error();
+  }
+}
+const initialState = {
+  data: null,
+  error: false,
+  loading: false,
+};
+
 const useFetch = (
-  depsArr=[],
+  depsArr = [],
   fetchFn,
   config = { skip: false, cacheTime: 0 }
 ) => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
   const [shouldRefetch, setShouldRefetch] = useState({});
+  const [{ data, loading, error }, dispatch] = useReducer(
+    reducer,
+    initialState
+  );
+
   const { skip, cacheTime } = config;
   const refetch = () => setShouldRefetch({});
   const depsJson = JSON.stringify(depsArr);
@@ -21,10 +41,10 @@ const useFetch = (
     const signal = abortController?.signal;
     if (!skip) {
       (async () => {
-        setLoading(true);
+        dispatch({ type: "pending" });
         try {
           if (cache[depsJson]) {
-            setData(cache[depsJson]);
+            dispatch({ type: "successfull", payload: cache[depsJson] });
           } else {
             const res = await fetchFn();
             if (!signal?.aborted) {
@@ -35,17 +55,15 @@ const useFetch = (
                     delete cache[depsJson];
                   }, cacheTime);
                 }
-                setData(res);
+                dispatch({ type: "successfull", payload: res });
               } else {
                 setError("error");
+                dispatch({ type: "error" });
               }
             }
           }
         } catch (e) {
           setError(e);
-        }
-        if (!signal?.aborted) {
-          setLoading(false);
         }
       })();
     }
