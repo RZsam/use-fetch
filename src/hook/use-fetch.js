@@ -13,7 +13,7 @@ const useFetch = (
   const { skip, cacheTime } = config;
   const refetch = () => setShouldRefetch({});
   const depsJson = JSON.stringify(depsArr);
-  
+
   useEffect(() => {
     const abortController = window.AbortController
       ? new AbortController()
