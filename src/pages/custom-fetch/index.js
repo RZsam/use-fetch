@@ -5,9 +5,7 @@ import useFetch from "../../hook/use-fetch";
 const Custom = () => {
   const [page, setPage] = useState(1);
 
-  const fetchFn = useCallback(() => getList(page), [page]);
-
-  const [data, loading] = useFetch( fetchFn, [page], {
+  const [data, loading] = useFetch(["getList", page], () => getList(page), {
     cacheTime: 50000,
   });
 
@@ -22,7 +20,7 @@ const Custom = () => {
     <div>
       <h1>custom</h1>
       <Table
-        data={data?.data}
+        data={data?.data || []}
         handleNext={handleNext}
         handlePrevious={handlePrevious}
         loading={loading}

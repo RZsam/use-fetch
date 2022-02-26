@@ -2,17 +2,17 @@ import { useEffect, useState } from "react";
 let cache = {};
 
 const useFetch = (
+  depsArr=[],
   fetchFn,
-  deps = [],
   config = { skip: false, cacheTime: 0 }
 ) => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [shouldRefetch, setShouldRefetch] = useState({});
   const { skip, cacheTime } = config;
   const refetch = () => setShouldRefetch({});
-  const depsJson = JSON.stringify(deps);
+  const depsJson = JSON.stringify(depsArr);
   
   useEffect(() => {
     const abortController = window.AbortController
