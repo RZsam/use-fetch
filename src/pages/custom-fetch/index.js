@@ -6,7 +6,7 @@ const Custom = () => {
   const [page, setPage] = useState(1);
 
   const [data, loading] = useFetch(["getList", page], () => getList(page), {
-    cacheTime: 50000,
+    // cacheTime: 50000,
   });
 
   const handleNext = () => setPage((p) => p + 1);

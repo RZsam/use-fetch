@@ -54,7 +54,7 @@ const useFetch = (
         abortController.abort();
       }
     };
-  }, [depsJson, shouldRefetch, skip, fetchFn]);
+  }, [depsJson, shouldRefetch, skip]);
   return [data, loading, error, refetch];
 };
 
