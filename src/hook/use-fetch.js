@@ -5,7 +5,7 @@ function reducer(state, action) {
   switch (action.type) {
     case "pending":
       return { ...state, loading: true };
-    case "successfull":
+    case "resolved":
       return { loading: false, error: null, data: action.payload };
     case "error":
       return { loading: false, error: true, data: null };
@@ -16,7 +16,7 @@ function reducer(state, action) {
 const initialState = {
   data: null,
   error: false,
-  loading: false,
+  loading: true,
 };
 
 const useFetch = (
@@ -41,11 +41,13 @@ const useFetch = (
     const signal = abortController?.signal;
     if (!skip) {
       (async () => {
-        dispatch({ type: "pending" });
-        try {
-          if (cache[depsJson]) {
-            dispatch({ type: "successfull", payload: cache[depsJson] });
-          } else {
+        if (cache[depsJson]) {
+          dispatch({ type: "resolved", payload: cache[depsJson] });
+        } else {
+          if (!loading) {
+            dispatch({ type: "pending" });
+          }
+          try {
             const res = await fetchFn();
             if (!signal?.aborted) {
               if (res.data) {
@@ -55,17 +57,18 @@ const useFetch = (
                     delete cache[depsJson];
                   }, cacheTime);
                 }
-                dispatch({ type: "successfull", payload: res });
+                dispatch({ type: "resolved", payload: res });
               } else {
-                setError("error");
                 dispatch({ type: "error" });
               }
             }
+          } catch (e) {
+            dispatch({ type: "error" });
           }
-        } catch (e) {
-          setError(e);
         }
       })();
+    } else if (loading) {
+      dispatch({ type: "resolved", payload: null });
     }
     return () => {
       if (window?.AbortController) {
