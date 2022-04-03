@@ -1,8 +1,17 @@
 import { useEffect, useState } from "react";
 let cache = {};
 
+/**
+ *
+ * @template TReq
+ * @template TRes
+ * @param {(string|number)[]|number|string} depsArr
+ * @param {(TReq)=>Promise<TRes>} fetchFn
+ * @param {{skip:boolean,cacheTime:Number}|undefined} config
+ * @returns {[Awaited<TRes>,boolean,boolean,Function]}
+ */
 const useFetch = (
-  depsArr=[],
+  depsArr = [],
   fetchFn,
   config = { skip: false, cacheTime: 0 }
 ) => {

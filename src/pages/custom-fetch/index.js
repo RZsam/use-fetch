@@ -33,6 +33,15 @@ const Custom = () => {
 
 export default Custom;
 
+/**
+ * 
+ * @param {number} page 
+ * @returns {Promise<{page:{id: number;
+ *       email: string;
+ *       first_name: string;
+ *       last_name: string;
+ *       avatar: string;}[]}>}
+ */
 const getList = (page) =>
   fetch(`https://reqres.in/api/users?page=${page}&per_page=2`)
     .then((res) => res.json())
