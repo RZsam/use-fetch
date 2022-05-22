@@ -1,12 +1,12 @@
 import React, { useCallback, useState } from "react";
 import Table from "../../component/table";
-import useFetch from "../../hook/use-fetch";
+import useFetch from "../../hook/use-query";
 
 const Custom = () => {
   const [page, setPage] = useState(1);
 
-  const [data, loading] = useFetch(["getList", page], () => getList(page), {
-    cacheTime: 50000,
+  const {data, isLoading} = useFetch(["getList", page], () => getList(page), {
+    cacheTime: 3000,
   });
   const handleNext = () => setPage((p) => p + 1);
   const handlePrevious = () => {
@@ -22,7 +22,7 @@ const Custom = () => {
         data={data?.data || []}
         handleNext={handleNext}
         handlePrevious={handlePrevious}
-        loading={loading}
+        loading={isLoading}
         page={data?.page}
       />
     </div>

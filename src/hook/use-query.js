@@ -1,36 +1,36 @@
-import { useEffect, useState, useReducer, createContext } from "react";
+import { useEffect, useState, useReducer } from "react";
 let cache = {};
 
 function reducer(state, action) {
   switch (action.type) {
     case "pending":
-      return { ...state, loading: true };
+      return { ...state, isLoading: true };
     case "resolved":
-      return { loading: false, error: null, data: action.payload };
+      return { isLoading: false, isError: null, data: action.payload };
     case "error":
-      return { loading: false, error: true, data: null };
+      return { isLoading: false, isError: true, data: null };
     default:
       throw new Error();
   }
 }
 const initialState = {
   data: null,
-  error: false,
-  loading: true,
+  isError: false,
+  isLoading: true,
 };
 
-const useFetch = (
+const useQuery = (
   depsArr = [],
   fetchFn,
-  config = { skip: false, cacheTime: 0 }
+  config = { enabled: false, cacheTime: 0 }
 ) => {
   const [shouldRefetch, setShouldRefetch] = useState({});
-  const [{ data, loading, error }, dispatch] = useReducer(
+  const [{ data, isLoading, isError }, dispatch] = useReducer(
     reducer,
     initialState
   );
 
-  const { skip, cacheTime } = config;
+  const { enabled, cacheTime } = config;
   const refetch = () => setShouldRefetch({});
   const depsJson = JSON.stringify(depsArr);
 
@@ -39,12 +39,12 @@ const useFetch = (
       ? new AbortController()
       : null;
     const signal = abortController?.signal;
-    if (!skip) {
+    if (!enabled) {
       (async () => {
         if (cache[depsJson]) {
           dispatch({ type: "resolved", payload: cache[depsJson] });
         } else {
-          if (!loading) {
+          if (!isLoading) {
             dispatch({ type: "pending" });
           }
           try {
@@ -67,7 +67,7 @@ const useFetch = (
           }
         }
       })();
-    } else if (loading) {
+    } else if (isLoading) {
       dispatch({ type: "resolved", payload: null });
     }
     return () => {
@@ -75,8 +75,8 @@ const useFetch = (
         abortController.abort();
       }
     };
-  }, [depsJson, shouldRefetch, skip]);
-  return [data, loading, error, refetch];
+  }, [depsJson, shouldRefetch, enabled]);
+  return {data, isLoading, isError, refetch};
 };
 
-export default useFetch;
+export default useQuery;
