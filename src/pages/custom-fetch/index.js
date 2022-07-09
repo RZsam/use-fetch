@@ -13,7 +13,6 @@ const Custom = () => {
     if (page === 1) return;
     setPage((p) => p - 1);
   };
-  console.log("render");
 
   return (
     <div>
