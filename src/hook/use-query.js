@@ -19,18 +19,14 @@ const initialState = {
   isLoading: true,
 };
 
-const useQuery = (
-  depsArr = [],
-  fetchFn,
-  config = { enabled: false, cacheTime: 0 }
-) => {
+const useQuery = (depsArr = [], fetchFn, config = {}) => {
   const [shouldRefetch, setShouldRefetch] = useState({});
   const [{ data, isLoading, isError }, dispatch] = useReducer(
     reducer,
     initialState
   );
 
-  const { enabled, cacheTime } = config;
+  const { enabled = true, cacheTime = 0 } = config;
   const refetch = () => setShouldRefetch({});
   const depsJson = JSON.stringify(depsArr);
 
@@ -39,7 +35,7 @@ const useQuery = (
       ? new AbortController()
       : null;
     const signal = abortController?.signal;
-    if (!enabled) {
+    if (enabled !== false) {
       (async () => {
         if (cache[depsJson]) {
           dispatch({ type: "resolved", payload: cache[depsJson] });
@@ -50,7 +46,7 @@ const useQuery = (
           try {
             const res = await fetchFn();
             if (!signal?.aborted) {
-              if (res.data) {
+              if (res) {
                 if (cacheTime) {
                   cache[depsJson] = res;
                   setTimeout(() => {
@@ -76,7 +72,7 @@ const useQuery = (
       }
     };
   }, [depsJson, shouldRefetch, enabled]);
-  return {data, isLoading, isError, refetch};
+  return { data, isLoading, isError, refetch };
 };
 
 export default useQuery;

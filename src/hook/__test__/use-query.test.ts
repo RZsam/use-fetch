@@ -6,6 +6,9 @@ test("normal functionality ", async () => {
   const { result, waitForNextUpdate } = renderHook(() =>
     useFetch(["getData"], () => getData())
   );
+
+  console.log(result.current);
+
   expect(result.current.data).toBe(null);
   expect(result.current.isLoading).toBe(true);
   expect(result.current.isError).toBe(false);
