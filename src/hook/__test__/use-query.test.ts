@@ -7,8 +7,6 @@ test("normal functionality ", async () => {
     useFetch(["getData"], () => getData())
   );
 
-  console.log(result.current);
-
   expect(result.current.data).toBe(null);
   expect(result.current.isLoading).toBe(true);
   expect(result.current.isError).toBe(false);
@@ -48,4 +46,20 @@ test("enable and disable useFetch", async () => {
 
   rerender();
   expect(result.current.isLoading).toBe(false);
+});
+
+test("cache ", async () => {
+  const { result, waitForNextUpdate } = renderHook(() =>
+    useFetch(["getData"], () => getData(), { cacheTime: 2000 })
+  );
+
+  expect(result.current.data).toBe(null);
+  expect(result.current.isLoading).toBe(true);
+  expect(result.current.isError).toBe(false);
+
+  await waitForNextUpdate();
+
+  expect(result.current.data).toBe("data");
+  expect(result.current.isLoading).toBe(false);
+  expect(result.current.isError).toBe(null);
 });
