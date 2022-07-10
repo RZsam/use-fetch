@@ -54,8 +54,6 @@ const useQuery = (depsArr = [], fetchFn, config = {}) => {
                   }, cacheTime);
                 }
                 dispatch({ type: "resolved", payload: res });
-              } else {
-                dispatch({ type: "error" });
               }
             }
           } catch (e) {
@@ -67,7 +65,7 @@ const useQuery = (depsArr = [], fetchFn, config = {}) => {
       dispatch({ type: "resolved", payload: null });
     }
     return () => {
-      if (window?.AbortController) {
+      if (abortController) {
         abortController.abort();
       }
     };
